@@ -3,9 +3,7 @@ import setuptools
 
 setuptools.setup(
 	name = "imgra",
-	version = "1",
-	author = "Enric Meinhardt-Llopis",
-	author_email = "enric.meinhardt@fastmail.com",
+	version = "2",
 	description = "Image Processing With Graphs",
 	url = "https://github.com/mnhrdt/imgra",
 	classifiers = [
@@ -14,5 +12,7 @@ setuptools.setup(
 		"Topic :: Scientific/Engineering :: Image Processing",
 		"Topic :: Scientific/Engineering :: Mathematics"
 		],
+	author = "Enric Meinhardt-Llopis",
+	author_email = "enric.meinhardt@fastmail.com",
 	py_modules = ["imgra"]
 )

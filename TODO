@@ -1,0 +1,7 @@
+TODO
+
+1. add command line, image-based access (from a single executable)
+2. add command line, graph-based access
+3. add more methods (e.g., screened poisson, diffusion models)
+4. add more grids (e.g., periodic boundaries, larger stencils, 3d grid)
+5. generally deal with vector-valued data

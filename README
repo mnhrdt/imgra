@@ -3,7 +3,7 @@ IMGRA: Image Processing With Graphs
 
 This is destined to be like imscript, but for functions defined on graphs.
 
-Most of this code is independent of images, and works for functions defined on
+Most of the code is independent of images, and works for functions defined on
 the vertices of arbitrary graphs.  Image processing is a particular case when
 the graph in question is a grid-graph.
 
