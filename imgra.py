@@ -164,10 +164,9 @@ def poisson_equation(
 	from scipy.sparse import diags, eye
 	from scipy.sparse.linalg import spsolve
 
-	n = f.shape[0]
 	L = -B.T @ B                 # laplacian operator
 	M = diags(m)                 # mask operator
-	I = eye(n,n)                 # identity operator
+	I = eye(*L.shape)            # identitNy operator
 	A = (I - M)     - M @ L      # linear system: matrix
 	b = (I - M) @ g - M @ f      # linear system: constant terms
 	u = spsolve(A, b)            # linear system: solution
@@ -176,7 +175,7 @@ def poisson_equation(
 
 # clone f into g inside m, using gradient merge criterion "s"
 def poisson_editor(B, f, g, m, s):
-	if s == "copypaste":
+	if type(s) == str and s == "copypaste":
 		return m*f + (1-m)*g
 
 	L = -B.T @ B                 # laplacian operator
@@ -197,9 +196,14 @@ def poisson_editor(B, f, g, m, s):
 	u = poisson_equation(B, -B.T @ X, g, m)
 	return u
 
-#def poisson_editor_color(B, f, g, m, s):
-#	for i in range(f.shape):
-#		u = poisson_editor(B, f[:,i] g[:,i], m, s):
+# call poisson editor separately for each color band
+def poisson_editor_color(B, f, g, m, s):
+	d = f.shape[1]
+	T = list(range(d))
+	for i in range(d):
+		T[i] = poisson_editor(B, f[:,i], g[:,i], m, s)
+	from numpy import dstack
+	return dstack(T)
 
 
 
@@ -221,19 +225,19 @@ def grid_incidence(h, w):
 
 # ## Examples
 #
-def demo():
+def demo_poisson_gray():
 	# load source, destination and mask images for poisson editing
 	import iio
-	U = "http://dev.ipol.im/~coco/img/"
-	f = iio.read(f"{U}foreground.jpg")[:,:,0]
-	g = iio.read(f"{U}pbackground.tif")[:,:,0]/20
-	m = iio.read(f"{U}dmask.png")[:,:,0]/255
+	U = "http://gabarro.org/img/"
+	f = iio.read(f"{U}poisson_source.png")[:,:,1]
+	g = iio.read(f"{U}poisson_dest.png")[:,:,1]
+	m = iio.read(f"{U}poisson_trimap.png")[:,:] > 0
 	iio.gallery([f, g, m*127])
 
 	h,w = f.shape
 	f = f.flatten()
 	g = g.flatten()
-	m = m.flatten()
+	m = m.flatten().astype(float)
 	B = grid_incidence(h,w)
 
 	T = list(range(5))
@@ -246,7 +250,32 @@ def demo():
 	iio.gallery(T)
 
 
-version = 2
+def demo_poisson_color():
+	# load source, destination and mask images for poisson editing
+	import iio
+	U = "http://gabarro.org/img/"
+	f = iio.read(f"{U}poisson_source.png")
+	g = iio.read(f"{U}poisson_dest.png")
+	m = iio.read(f"{U}poisson_trimap.png") > 0
+	iio.gallery([f, g, m*127])
+
+	h,w,d = f.shape
+	f = f.reshape(h*w, d)
+	g = g.reshape(h*w, d)
+	m = m.reshape(h*w).astype(float)
+	B = grid_incidence(h,w)
+
+	T = list(range(5))
+	T[0] = poisson_editor_color(B, f, g, m, "copypaste")
+	T[1] = poisson_editor_color(B, f, g, m, "replace")
+	T[2] = poisson_editor_color(B, f, g, m, "sum")
+	T[3] = poisson_editor_color(B, f, g, m, "max")
+	T[4] = poisson_editor_color(B, f, g, m, "average")
+	T = [t.reshape(h,w,d) for t in T]
+	iio.gallery(T)
+
+
+version = 3
 # no need for __all__ since there's no hidden stuff
 
 
