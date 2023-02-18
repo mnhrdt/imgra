@@ -5,3 +5,4 @@ TODO
 3. add more methods (e.g., screened poisson, diffusion models)
 4. add more grids (e.g., periodic boundaries, larger stencils, 3d grid)
 5. generally deal with vector-valued data
+6. use CHOLMOD instead of scipy.sparse.linalg.spsolve
