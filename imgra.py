@@ -164,47 +164,48 @@ def poisson_equation(
 	from scipy.sparse import diags, eye
 	from scipy.sparse.linalg import spsolve
 
-	L = -B.T @ B                 # laplacian operator
-	M = diags(m)                 # mask operator
-	I = eye(*L.shape)            # identitNy operator
-	A = (I - M)     - M @ L      # linear system: matrix
-	b = (I - M) @ g - M @ f      # linear system: constant terms
-	u = spsolve(A, b)            # linear system: solution
+	L = -B.T @ B             # laplacian operator
+	M = diags(m)             # mask operator
+	I = eye(*L.shape)        # identity operator
+	A = (I - M)     - M @ L  # linear system: matrix
+	b = (I - M) @ g - M @ f  # linear system: constant terms
+	u = spsolve(A, b)        # linear system: solution
 	return u
 
 
 # clone f into g inside m, using gradient merge criterion "s"
-def poisson_editor(B, f, g, m, s):
+def poisson_editor(
+		B, # incidence matrix of the graph
+		f, # source image
+		g, # destination image
+		m, # mask
+		s  # fusion criterion
+		):
 	if type(s) == str and s == "copypaste":
 		return m*f + (1-m)*g
 
-	L = -B.T @ B                 # laplacian operator
-	F = B @ f                   # gradient of source image
-	G = B @ g                   # gradient of destination image
+	L = -B.T @ B             # laplacian operator
+	F = B @ f                # gradient of source image
+	G = B @ g                # gradient of destination image
 
 	# combine both gradients into a target gradient X
-	if s == "replace":
-		X = F
-	if s == "sum":
-		X = F + G
-	if s == "average":
-		X = (F + G)/2
-	if s == "max":
-		X = F + (G - F) * (abs(G) > abs(F))
+	if s == "replace":  X = F
+	if s == "sum":      X = F + G
+	if s == "average":  X = (F + G)/2
+	if s == "max":      X = F + (G - F) * (abs(G) > abs(F))
 
 	# recover the image from this gradient
 	u = poisson_equation(B, -B.T @ X, g, m)
 	return u
 
+
 # call poisson editor separately for each color band
 def poisson_editor_color(B, f, g, m, s):
-	d = f.shape[1]
-	T = list(range(d))
-	for i in range(d):
-		T[i] = poisson_editor(B, f[:,i], g[:,i], m, s)
 	from numpy import dstack
-	return dstack(T)
-
+	return dstack([
+			poisson_editor(B, f[:,i], g[:,i], m, s)
+			for i in range(f.shape[1])
+		])
 
 
 # ## Graph for images
