@@ -78,6 +78,7 @@ def binary_morphology_median(E, x):
 def dilation(E, x):
 	from scipy.sparse import diags
 	y = (diags(x.squeeze()) @ E).max(axis=0).A.T.squeeze()
+	# TODO: make this formula work also for color data
 	return y
 
 
