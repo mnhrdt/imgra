@@ -75,11 +75,25 @@ def binary_morphology_median(E, x):
 # matrix and pick the max of each row.  The other gray-level morphological
 # operations are defined in terms of the dilation
 
-def dilation(E, x):
+def dilation_gray(E, x):
 	from scipy.sparse import diags
 	y = (diags(x.squeeze()) @ E).max(axis=0).A.T.squeeze()
 	# TODO: make this formula work also for color data
 	return y
+
+def dilation_color(E, x):
+	from numpy import vstack
+	d =  x.squeeze().shape[1]
+	y = vstack([dilation_gray(E, x[:,i]) for i in range(d)]).T
+	return y
+
+def dilation(E, x):
+	if x.squeeze().ndim == 1 :
+		return dilation_gray(E, x)
+	else:
+		return dilation_color(E, x)
+
+# TODO: remove unnecessary sqeezes in the previous three functions
 
 
 def erosion(E, x):
