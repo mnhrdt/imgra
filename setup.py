@@ -3,7 +3,7 @@ import setuptools
 
 setuptools.setup(
 	name = "imgra",
-	version = "3",
+	version = "4",
 	description = "Image Processing With Graphs",
 	url = "https://github.com/mnhrdt/imgra",
 	classifiers = [

@@ -291,7 +291,7 @@ def demo_poisson_color():
 	iio.gallery(T)
 
 
-version = 3
+version = 4
 # no need for __all__ since there's no hidden stuff
 
 
