@@ -3,12 +3,12 @@ import setuptools
 
 setuptools.setup(
 	name = "imgra",
-	version = "4",
+	version = "5",
 	description = "Image Processing With Graphs",
 	url = "https://github.com/mnhrdt/imgra",
+	license = "AGPL-3.0",
 	classifiers = [
 		"Operating System :: OS Independent",
-		"License :: OSI Approved :: GNU Affero General Public License v3",
 		"Topic :: Scientific/Engineering :: Image Processing",
 		"Topic :: Scientific/Engineering :: Mathematics"
 		],

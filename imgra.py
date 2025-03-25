@@ -238,6 +238,22 @@ def grid_incidence(h, w):
 	B = vstack([p, q])                           # union of all paths
 	return B
 
+def pgrid_incidence(h, w):
+	""" Build the signed incidence matrix of a WxH periodic grid graph """
+	from scipy.sparse import eye, kron, vstack
+	x = eye(w, w, 1) - eye(w, w)             # cycle graph of length W
+	y = eye(h, h, 1) - eye(h, h)             # cycle graph of length H
+	import warnings
+	with warnings.catch_warnings(action="ignore"):
+		x[-1,0] = 1
+		y[-1,0] = 1
+	p = kron(eye(h), x)                          # H horizontal paths
+	q = kron(y, eye(w))                          # W vertical paths
+	B = vstack([p, q])                           # union of all paths
+	return B
+
+
+
 
 # ## Examples
 #
@@ -291,8 +307,38 @@ def demo_poisson_color():
 	iio.gallery(T)
 
 
-version = 4
+version = 5
 # no need for __all__ since there's no hidden stuff
 
 
 # vim:set tw=77 filetype=python spell spelllang=en:
+
+def demo_morphology():
+	import iio
+	U = "http://gabarro.org/img/"
+	x = iio.read(f"{U}barbara.png")[:,:,0]
+	h,w = x.shape
+	x = x.reshape(h*w)
+	iio.gallery([x])
+
+#demo_morphology()
+#
+#import iio
+#x = iio.read("http://gabarro.org/img/barbara.png")
+#
+#h,w,d = x.shape
+#x = x.reshape(h*w,d)
+#
+#iio.display(x)
+#
+#import iio
+#
+#iio.version
+
+
+
+
+
+
+
+
