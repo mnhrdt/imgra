@@ -77,7 +77,8 @@ def binary_morphology_median(E, x):
 
 def dilation_gray(E, x):
 	from scipy.sparse import diags
-	y = (diags(x.squeeze()) @ E).max(axis=0).A.T.squeeze()
+	#y = (diags(x.squeeze()) @ E).max(axis=0).A.T.squeeze()
+	y = (diags(x.squeeze()) @ E).max(axis=0).toarray().T.squeeze()
 	# TODO: make this formula work also for color data
 	return y
 
@@ -307,38 +308,24 @@ def demo_poisson_color():
 	iio.gallery(T)
 
 
-version = 5
-# no need for __all__ since there's no hidden stuff
-
-
-# vim:set tw=77 filetype=python spell spelllang=en:
-
 def demo_morphology():
 	import iio
 	U = "http://gabarro.org/img/"
 	x = iio.read(f"{U}barbara.png")[:,:,0]
 	h,w = x.shape
 	x = x.reshape(h*w)
-	iio.gallery([x])
-
-#demo_morphology()
-#
-#import iio
-#x = iio.read("http://gabarro.org/img/barbara.png")
-#
-#h,w,d = x.shape
-#x = x.reshape(h*w,d)
-#
-#iio.display(x)
-#
-#import iio
-#
-#iio.version
+	E = adjacency_from_incidence(grid_incidence(h,w))
+	iio.gallery([x, dilation(E,x), erosion(E,x), opening(E,x), closing(E,x),
+	      egradient(E,x), igradient(E,x), cgradient(E,x),
+	      127-4*mlaplacian(E,x), msharpen(E,x), mblur(E,x),
+	      tophat(E,x), 255-bothat(E,x), oscillation(E,x)
+	      # iblur(E,x), eblur(E,x), cblur(E,x)
+	      ])
 
 
 
+version = 6
+# no need for __all__ since there's no hidden stuff
 
 
-
-
-
+# vim:set tw=77 filetype=python spell spelllang=en:
